@@ -2,7 +2,7 @@
 
 This is a web application built with React that allows users to take quizzes. It uses an API for its data and authentication.
 
-Live Link: https://nagarjuna06.github.io/Quiz-Application
+Live Link: https://nagarjuna-quiz-app.netlify.app
 
 ## Features
 
@@ -58,5 +58,7 @@ After completing the quiz, you will see a summary of your results, including you
 This application uses the Quiz API to retrieve quiz data and authenticate users. The API has the following endpoints:
 
 `GET /quiz` : Returns a list of available quizzes.
+
 `GET /quiz/:id` : Returns the quiz with the given ID.
+
 `GET /quiz/:quizName/:questionId/answer` : it returns answer for the specified question.
