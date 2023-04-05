@@ -39,19 +39,6 @@ const QuestionFormat = () => {
     const [enableSkipBtn, setEnableSkipBtn] = useState(true);
     const [clickedOption, setClickedOption] = useState('');
     const [skipTime, setSkipTime] = useState(skip);
-
-    useEffect(() => {
-        setShowExplanation(false);
-        setShowBtn(true);
-        setCorrect(false);
-        setSelectedOption('');
-        setShowError(false);
-        setClickedOption('');
-        setMarks(0);
-        setSkipTime(skip);
-        setEnableSkipBtn(true);
-    }, [data])
-
     const doNotCopy = () => {
         navigator.clipboard.writeText('')
     }
@@ -98,6 +85,7 @@ const QuestionFormat = () => {
 
         )
     }
+
     const btnClicked = async (e) => {
         e.target.innerText += '...'
         await answerApiCall()
@@ -185,7 +173,13 @@ const QuestionFormat = () => {
     }
     const renderSkipText = () => {
         return (
-            <p>Skip&Show button's will be enabled in {skipTime} seconds</p>
+            <p>Skip&Show button will be enabled in {skipTime} seconds!.</p>
+        )
+    }
+
+    const renderText = () => {
+        return (
+            <p>If you Skip,you attempt this question again!.</p>
         )
     }
     const question = () => {
@@ -216,19 +210,23 @@ const QuestionFormat = () => {
                 }
                 {showError && <ErrorMsg>*Please select an option</ErrorMsg>}
                 {
-                    showBtn &&
-                    < ButtonContainer >
-                        <Button type='button' onClick={btnClicked} Color disabled={enableSkipBtn} noDrop={enableSkipBtn}>Show Answer</Button>
-                        <Button type='submit' bgColor onClick={submitBtnClicked}>Submit</Button>
-                        <SkipBtnContainer>
-                            <Button type='button' onClick={skipBtnClicked} Color noDrop={enableSkipBtn} disabled={enableSkipBtn}>Skip</Button>
-                            {enableSkipBtn && renderSkipText()}
-                        </SkipBtnContainer>
+                    showBtn ?
+                        < ButtonContainer >
+                            <Button type='button' onClick={btnClicked} Color disabled={enableSkipBtn} noDrop={enableSkipBtn}>Show Answer</Button>
+                            <Button type='submit' bgColor onClick={submitBtnClicked}>Submit</Button>
+                            <SkipBtnContainer>
+                                <Button type='button' onClick={skipBtnClicked} Color noDrop={enableSkipBtn} disabled={enableSkipBtn}>Skip</Button>
+                                {enableSkipBtn ? renderSkipText() : renderText()}
+                            </SkipBtnContainer>
 
-                    </ButtonContainer>
+                        </ButtonContainer>
+                        :
+                        <>
+                            {showExplanation && explanationContent()}
+                            {selectedOption && marksContent()}
+                        </>
+
                 }
-                {showExplanation && explanationContent()}
-                {selectedOption && marksContent()}
             </Form >
         )
 

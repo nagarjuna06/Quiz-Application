@@ -23,7 +23,6 @@ const shuffledArray = array => {
 const selectRandomQuestion = () => {
     const index = Math.floor(Math.random() * questionObj.length)
     return questionObj[index]
-
 }
 const randomQuestion = () => {
     const question = selectRandomQuestion();
@@ -85,12 +84,17 @@ const Quiz = () => {
     const [skip, setSkip] = useState(0);
     const [mark, setMark] = useState(0);
     const [score, setScore] = useState(0);
-    const [errorMsg, SetErrorMsg] = useState('Questions Are Loading...');
+    const [errorMsg, SetErrorMsg] = useState('Questions are Loading...');
     const [gameState, setGameState] = useState(gameStatus.loading);
     const [queryParams, setQueryParams] = useState({});
+    const [questionChange, setQuestionChange] = useState(true);
     const loadNextQuestion = () => {
         if (questionObj.length > 0) {
-            setQuestion(randomQuestion());
+            setQuestionChange(false)
+            setTimeout(() => {
+                setQuestion(randomQuestion());
+                setQuestionChange(true)
+            }, 500);
         }
         else {
             quizOver()
@@ -126,7 +130,8 @@ const Quiz = () => {
                 setSkip(response.skip);
                 setMark(response.mark);
                 setQuestion(randomQuestion());
-                setGameState(gameStatus.start)
+                setGameState(gameStatus.start);
+                SetErrorMsg("Question is Loading...");
                 setQueryParams(values);
             }
             else {
@@ -189,7 +194,10 @@ const Quiz = () => {
                 </Navbar>
                 <QuizName>{quizName} Quiz</QuizName>
                 <LevelName>{level} level</LevelName>
-                <QuestionFormat />
+                {questionChange ? <QuestionFormat />
+                    :
+                    renderLoadingComponent()
+                }
             </>
         )
     }
