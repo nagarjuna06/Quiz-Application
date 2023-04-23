@@ -37,6 +37,7 @@ export const Input = styled.input`
     margin-right:15px;
     width:14px;
     height:14px;
+    accent-color:#1665d8;
 `;
 
 export const Button = styled.button`
@@ -55,7 +56,8 @@ export const Button = styled.button`
     font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
     ${props => props.bgColor && "box-shadow:2px 2px 3px grey;"}
     ${props => props.noDrop && 'cursor:no-drop;'}
-    ${props => props.disabled && "color:#95c0ff; border: 2px solid #95c0ff;"}
+    ${props => (props.disabled && !props.bgColor) && "color:#95c0ff; border: 2px solid #95c0ff;"}
+    ${props => (props.disabled && props.bgColor) && "background-color:#95c0ff; border:0;"}
     @media (min-width:650px){
         margin-top:${props => props.noMargin ? "20px" : "50px"};
     }

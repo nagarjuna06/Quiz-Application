@@ -39,6 +39,7 @@ const QuestionFormat = () => {
     const [enableSkipBtn, setEnableSkipBtn] = useState(true);
     const [clickedOption, setClickedOption] = useState('');
     const [skipTime, setSkipTime] = useState(skip);
+    const [disableBtn, setDisableBtn] = useState(false);
     const doNotCopy = () => {
         navigator.clipboard.writeText('')
     }
@@ -87,7 +88,8 @@ const QuestionFormat = () => {
     }
 
     const btnClicked = async (e) => {
-        e.target.innerText += '...'
+        enableSkipBtn(true);
+        setDisableBtn(true);
         await answerApiCall()
         setShowExplanation(true)
         setShowBtn(false)
@@ -143,13 +145,17 @@ const QuestionFormat = () => {
     }
 
     const submitQuestion = async (e) => {
-        e.preventDefault()
-        await answerApiCall()
-        const { answer } = data
+        e.preventDefault();
+        setEnableSkipBtn(true);
+        setDisableBtn(true);
         if (clickedOption === '') {
+            setEnableSkipBtn(false)
+            setDisableBtn(false)
             setShowError(true)
             return
         }
+        await answerApiCall()
+        const { answer } = data
         setSelectedOption(clickedOption);
         setShowBtn(false)
         if (answer === clickedOption) {
@@ -164,23 +170,24 @@ const QuestionFormat = () => {
             questionMarks(-1, data.questionId)
         }
     }
-    const submitBtnClicked = e => {
-        e.target.innerText += '...'
-    }
     const optionClicked = e => {
         setClickedOption(e.target.value);
         setShowError(false)
     }
     const renderSkipText = () => {
-        return (
-            <p>Skip&Show button will be enabled in {skipTime} seconds!.</p>
-        )
+        if (!disableBtn) {
+            return (
+                <p>Skip&Show button will be enabled in {skipTime} seconds!.</p>
+            )
+        }
     }
 
     const renderText = () => {
-        return (
-            <p>If you Skip,you attempt this question again!.</p>
-        )
+        if (!disableBtn) {
+            return (
+                <p>If you Skip,you attempt this question again!.</p>
+            )
+        }
     }
     const question = () => {
         const { question, options, code = null, answer } = data
@@ -213,7 +220,7 @@ const QuestionFormat = () => {
                     showBtn ?
                         < ButtonContainer >
                             <Button type='button' onClick={btnClicked} Color disabled={enableSkipBtn} noDrop={enableSkipBtn}>Show Answer</Button>
-                            <Button type='submit' bgColor onClick={submitBtnClicked}>Submit</Button>
+                            <Button type='submit' bgColor disabled={disableBtn} noDrop={disableBtn}>Submit</Button>
                             <SkipBtnContainer>
                                 <Button type='button' onClick={skipBtnClicked} Color noDrop={enableSkipBtn} disabled={enableSkipBtn}>Skip</Button>
                                 {enableSkipBtn ? renderSkipText() : renderText()}
