@@ -32,14 +32,15 @@ export const Input = styled.input`
     text-transform:capitalize;
     padding:5px;
     margin-top:20px;
-`;
+    `;
 
 export const Select = styled.select`
     margin:10px;
     font-size:18px;
+    padding:5px;
     text-transform:capitalize;
     margin-top:20px;
-    width:90%;
+    width:94%;
     @media (min-width:650px){
         width:25%;
     }

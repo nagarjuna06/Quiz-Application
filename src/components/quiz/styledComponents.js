@@ -33,15 +33,13 @@ export const Time = styled.h3`
     align-items:center;
     font-size:16px;
     color:${props => props.timeless ? "red" : "darkgreen"};
-    // padding:15px 5px;
-    // border-radius:50%;
     @media (min-width:650px){
         font-size:18px;
     }
 `;
 
 export const LoadingContainer = styled.div`
-    height:350px;
+    height:480px;
     padding:${props => props.padding}px;
     height:${props => props.height}px;
     width:320px;
@@ -82,25 +80,57 @@ export const Rank = styled.p`
     color:royalblue;
     font-size:20px;
     font-weight:bold;
+    text-transform:uppercase;
 `;
 
 export const Score = styled.span`
     color:orange;
-    font-size:25px;
+    font-size:28px;
+    @media (min-width:650px){
+        font-size:40px;
+
+    };
 
 `;
-export const ScoreCardImg = styled.div`
-    background:url('https://thumbs.dreamstime.com/b/prize-cup-illustration-51511994.jpg');
-    background-size:70%;
-    background-position:center top;
-    background-repeat:no-repeat;
-    width:100%;
-    height:70%;
-    display:flex;
-    justify-content:center;
-    align-items:flex-end;
+export const ScoreText = styled.h1`
+    margin:3px;
+    font-size:20px;
     @media (min-width:650px){
-        height:80%;
-        background-size:40%;
-    }
+        font-size:30px;
+
+    };
+`;
+
+export const ScoreCardImg = styled.img`
+    width:200px;
+    height:200px;
+    @media (min-width:650px){
+        width:240px;
+        height:260px;
+
+    };
+`;
+export const DownlodIconContainer = styled.div`
+display:flex;
+justify-content:flex-end;
+`;
+export const ResponsiveDiv = styled.div`
+    width:100%;
+    display:flex;
+    flex-direction:column;
+    text-align:center;
+@media (min-width:650px){
+        flex-direction:row;
+        justify-content:space-around;
+
+    };
+`;
+export const ScoreDiv = styled.div`
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+@media (min-width:650px){
+        justify-content:space-around;
+
+    };  
 `;

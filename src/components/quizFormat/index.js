@@ -10,7 +10,7 @@ import {
     ErrorMsg,
     Marks,
     MarksContainer,
-    SkipBtnContainer
+    SkipBtnContainer,
 } from './styledComponents';
 import { v4 as uuid } from 'uuid';
 import { IoCheckmarkCircleOutline, IoCloseCircleOutline } from 'react-icons/io5'
@@ -22,10 +22,11 @@ import 'ace-builds/src-noconflict/mode-python'
 import 'ace-builds/src-noconflict/mode-html'
 import 'ace-builds/src-noconflict/mode-sql'
 import 'ace-builds/src-noconflict/mode-css'
-
+import './index.css';
 import { useContext, useState } from 'react';
 import { useEffect } from 'react';
 import QuestionContext from '../../context/questionContext';
+import { Oval } from 'react-loader-spinner';
 
 const QuestionFormat = () => {
     const context = useContext(QuestionContext);
@@ -40,29 +41,29 @@ const QuestionFormat = () => {
     const [clickedOption, setClickedOption] = useState('');
     const [skipTime, setSkipTime] = useState(skip);
     const [disableBtn, setDisableBtn] = useState(false);
-    const doNotCopy = () => {
+    const [showAnswerBtnLoading, setShowAnwerBtnLoding] = useState(false);
+    const [submitBtnLoading, setSubmitBtnLoading] = useState(false);
+    window.addEventListener('copy', () => {
         navigator.clipboard.writeText('')
-    }
+    })
 
     const codeContent = () => {
         const { code, language } = data.code
         return (
+
             <AceEditor
                 width='100%'
-                // height={100}
+                height='100%'
+                className='my-ace-editor'
                 minLines={5}
-                maxLines={30}
+                maxLines={15}
                 mode={language}
                 theme='dracula'
-                // name="blah2"
                 fontSize={14}
                 showGutter={true}
                 highlightActiveLine={false}
                 value={code}
                 readOnly={true}
-                onCopy={doNotCopy}
-                style={{ borderRadius: "5px", margin: "20px 0px" }
-                }
             />
         )
     }
@@ -88,7 +89,8 @@ const QuestionFormat = () => {
     }
 
     const btnClicked = async (e) => {
-        enableSkipBtn(true);
+        setShowAnwerBtnLoding(true);
+        setEnableSkipBtn(true);
         setDisableBtn(true);
         await answerApiCall()
         setShowExplanation(true)
@@ -112,7 +114,6 @@ const QuestionFormat = () => {
         getQuestion();
     }
     const nextBtnClicked = e => {
-        e.target.innerText += '...'
         getQuestion()
     }
     const marksContent = () => {
@@ -154,6 +155,7 @@ const QuestionFormat = () => {
             setShowError(true)
             return
         }
+        setSubmitBtnLoading(true);
         await answerApiCall()
         const { answer } = data
         setSelectedOption(clickedOption);
@@ -195,44 +197,78 @@ const QuestionFormat = () => {
             <Form onSubmit={submitQuestion}>
                 <Question>Q. {question}</Question>
                 {code !== null && codeContent()}
-                {
-                    options.map(each => (
-                        <Option key={uuid()}>
-                            <Input type='radio' id={each} value={each} name='selectedOption' disabled={true && selectedOption} onChange={optionClicked} checked={each === clickedOption} />
+                <div>
+                    {
+                        options.map(each => (
+                            <Option key={uuid()}>
+                                <Input type='radio' id={each} value={each} name='selectedOption' disabled={true && selectedOption} onChange={optionClicked} checked={each === clickedOption} />
 
-                            <OptionCorrectWrong
-                                htmlFor={each}
-                                correct={each === (selectedOption && correct) || (each === answer && selectedOption)}
-                                wrong={each === selectedOption && !correct}
-                                onClick={() => setShowError(false)}
-                            >
-                                {each}
-                            </OptionCorrectWrong>
+                                <OptionCorrectWrong
+                                    htmlFor={each}
+                                    correct={each === (selectedOption && correct) || (each === answer && selectedOption)}
+                                    wrong={each === selectedOption && !correct}
+                                    onClick={() => setShowError(false)}
+                                >
+                                    {each}
+                                </OptionCorrectWrong>
 
-                            {((each === selectedOption && !correct) && QuestionWrong())
-                                ||
-                                ((each === (selectedOption && correct) || (each === answer && selectedOption)) && QuestionCorrect())}<br />
-                        </Option>
-                    ))
-                }
+                                {((each === selectedOption && !correct) && QuestionWrong())
+                                    ||
+                                    ((each === (selectedOption && correct) || (each === answer && selectedOption)) && QuestionCorrect())}<br />
+                            </Option>
+                        ))
+                    }
+                </div>
                 {showError && <ErrorMsg>*Please select an option</ErrorMsg>}
                 {
                     showBtn ?
                         < ButtonContainer >
-                            <Button type='button' onClick={btnClicked} Color disabled={enableSkipBtn} noDrop={enableSkipBtn}>Show Answer</Button>
-                            <Button type='submit' bgColor disabled={disableBtn} noDrop={disableBtn}>Submit</Button>
+                            <Button type='button' onClick={btnClicked} Color disabled={enableSkipBtn} noDrop={enableSkipBtn} noBorder={showAnswerBtnLoading}>
+                                {
+                                    showAnswerBtnLoading ?
+                                        <Oval
+                                            height={24}
+                                            width={24}
+                                            color="#1665d8"
+                                            visible={true}
+                                            ariaLabel='oval-loading'
+                                            secondaryColor="#1665d8"
+                                            strokeWidth={3}
+                                            strokeWidthSecondary={3}
+                                        />
+                                        :
+                                        "Show Answer"
+                                }
+                            </Button>
+                            <Button type='submit' bgColor disabled={disableBtn} noDrop={disableBtn} noBorder={submitBtnLoading}>
+                                {
+                                    submitBtnLoading ?
+                                        <Oval
+                                            height={24}
+                                            width={24}
+                                            color="#fff"
+                                            visible={true}
+                                            ariaLabel='oval-loading'
+                                            secondaryColor="#1665d8"
+                                            strokeWidth={3}
+                                            strokeWidthSecondary={3}
+                                        />
+                                        :
+                                        "Submit"
+                                }
+
+
+                            </Button>
                             <SkipBtnContainer>
-                                <Button type='button' onClick={skipBtnClicked} Color noDrop={enableSkipBtn} disabled={enableSkipBtn}>Skip</Button>
+                                <Button type='button' onClick={skipBtnClicked} Color noDrop={enableSkipBtn} disabled={enableSkipBtn} flex={true}>Skip</Button>
                                 {enableSkipBtn ? renderSkipText() : renderText()}
                             </SkipBtnContainer>
-
                         </ButtonContainer>
                         :
                         <>
                             {showExplanation && explanationContent()}
                             {selectedOption && marksContent()}
                         </>
-
                 }
             </Form >
         )

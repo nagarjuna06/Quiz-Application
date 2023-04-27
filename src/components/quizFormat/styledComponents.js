@@ -24,6 +24,9 @@ export const Option = styled.div`
    display:flex;
    align-items:center;
    padding-left:10px;
+   margin:10px 0px;
+   box-shadow:0px 0px 2px grey;
+   border-radius:5px;
    @media (min-width:650px){
     padding-left:20px;
     }
@@ -45,19 +48,25 @@ export const Button = styled.button`
     background-color: ${props => props.bgColor ? "#1665d8" : "white"};
     border: 2px solid #1665d8;
     font-size:16px;
-    padding: 3px 30px;
+    padding:${props => props.noBorder ? "" : "3px 30px"};
     border-radius: 5px;
     cursor: pointer;
     ${props => props.noMargin ? '' : "margin-right:20px;"}
     font-weight:500;
     text-transform:uppercase;
     margin-top:20px;
-    width:200px;
+    width:${props => props.noWidth ? "0" : "200"}px;
     font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
     ${props => props.bgColor && "box-shadow:2px 2px 3px grey;"}
     ${props => props.noDrop && 'cursor:no-drop;'}
     ${props => (props.disabled && !props.bgColor) && "color:#95c0ff; border: 2px solid #95c0ff;"}
     ${props => (props.disabled && props.bgColor) && "background-color:#95c0ff; border:0;"}
+    ${props => props.flex ?
+        ""
+        :
+        "display:flex;justify-content:center;"
+    }
+    
     @media (min-width:650px){
         margin-top:${props => props.noMargin ? "20px" : "50px"};
     }
@@ -102,4 +111,15 @@ export const SkipBtnContainer = styled.div`
     font-size:14px;
     font-weight:500;
     color:royalblue;
+`;
+
+export const ResponsiveDiv = styled.div`
+    @media (min-width:650px){
+        ${props => props.code && `
+        display:flex;
+        flex-direction:row-reverse;
+        justify-content:space-between;
+        align-items:center;
+        `}
+    };
 `;

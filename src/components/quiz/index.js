@@ -1,13 +1,18 @@
 
 import { useEffect, useState } from "react";
 import QuestionFormat from "../quizFormat"
-import { LevelName, LoadingContainer, LoadingText, QuizContainer, QuizName, Time, TimeContainer, BgContainer, ScoreCardImg, Score, Rank, Navbar } from "./styledComponents"
+import { LevelName, LoadingContainer, LoadingText, QuizContainer, QuizName, Time, TimeContainer, BgContainer, ScoreCardImg, Score, Rank, Navbar, DownlodIconContainer, ResponsiveDiv, ScoreDiv, ScoreText } from "./styledComponents"
 import QuestionContext from "../../context/questionContext";
 import { Watch } from "react-loader-spinner";
 import { RiTimerLine } from 'react-icons/ri'
 import { useLocation, useNavigate } from "react-router-dom";
 import queryString from "query-string";
 import { Button } from "../quizFormat/styledComponents";
+import { useRef } from "react";
+import { FaDownload } from 'react-icons/fa';
+import trophyIcon from '../images/trophy-icon.png';
+import html2canvas from "html2canvas";
+import Cookies from "js-cookie";
 
 const gameStatus = {
     loading: "LOADING",
@@ -77,6 +82,7 @@ const Timer = (props) => {
 }
 
 const Quiz = () => {
+    const componentRef = useRef(null);
     const location = useLocation();
     const navigate = useNavigate();
     const [Question, setQuestion] = useState({});
@@ -101,6 +107,14 @@ const Quiz = () => {
         }
     }
 
+    const handleDownloadClick = () => {
+        html2canvas(componentRef.current).then(canvas => {
+            const link = document.createElement('a');
+            link.download = 'result.jpeg';
+            link.href = canvas.toDataURL('image/jpeg');
+            link.click();
+        });
+    };
 
     const storeMarks = (marks, questionId) => {
         if (marks > 0) {
@@ -112,7 +126,7 @@ const Quiz = () => {
         setGameState(gameStatus.end)
     }
     const quizApiCall = async () => {
-        const values = queryString.parse(location.search);
+        const values = JSON.parse(Cookies.get('data'));
         const { quizName, level, no } = values
         const apiKey = process.env.REACT_APP_API_KEY;
         const options = {
@@ -156,22 +170,32 @@ const Quiz = () => {
         const noOfQuestions = parseInt(no);
 
         return (
-            <LoadingContainer height={500}>
-                <QuizName>{quizName} Quiz</QuizName>
-                <LevelName>{level} level</LevelName>
-                <ScoreCardImg>
-                    <Rank>{name}</Rank>
-                </ScoreCardImg>
-                <LoadingText>You Scored</LoadingText>
-                <h3><Score>{score}</Score>/{mark * noOfQuestions}</h3>
-                <Button bgColor noMargin onClick={playAgainClicked}>Play Again!</Button>
-            </LoadingContainer>
+            <>
+                <DownlodIconContainer>
+                    <FaDownload style={{ cursor: "pointer" }} size={20} color="#1665d8" onClick={handleDownloadClick} />
+                </DownlodIconContainer>
+                <LoadingContainer ref={componentRef} padding={20}>
+                    <QuizName>{quizName} Quiz</QuizName>
+                    <LevelName>{level} level</LevelName>
+                    <ResponsiveDiv>
+                        <div>
+                            <ScoreCardImg src={trophyIcon} />
+                            <Rank>{name}</Rank>
+                        </div>
+                        <ScoreDiv>
+                            <LoadingText>You Scored</LoadingText>
+                            <ScoreText><Score>{score}</Score>/{mark * noOfQuestions}</ScoreText>
+                            <Button bgColor noMargin onClick={playAgainClicked}>Play Again!</Button>
+                        </ScoreDiv>
+                    </ResponsiveDiv>
+                </LoadingContainer>
+            </>
         )
     }
 
     const renderLoadingComponent = () => {
         return (
-            <LoadingContainer>
+            <LoadingContainer height={400}>
                 <Watch
                     height="80"
                     width="80"

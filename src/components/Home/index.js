@@ -4,6 +4,7 @@ import { QuizForm, Input, Select, option, QuizImage, QuizImageContainer, ErrorTe
 import { Watch } from "react-loader-spinner";
 import { Button } from "../quizFormat/styledComponents";
 import { useNavigate } from "react-router-dom";
+import Cookies from "js-cookie";
 
 const Home = () => {
     const navigate = useNavigate();
@@ -45,8 +46,10 @@ const Home = () => {
             SetErrorMsg('*Please enter your name')
         }
         else {
-            const { name, quizName, level, no } = formData
-            navigate(`/quiz?quizName=${quizName}&name=${name}&level=${level}&no=${no}`);
+            const { name, quizName, level, no } = formData;
+            const data = JSON.stringify({ quizName, name, level, no });
+            Cookies.set('data', data, { expires: 30 });
+            navigate(`/quiz`);
         }
     }
 
@@ -68,7 +71,7 @@ const Home = () => {
                     {nos.map(each => <option value={each} key={each}>{each}</option>)}
                 </Select><br />
                 <ErrorText>{errorMsg}</ErrorText>
-                <Button bgColor>submit</Button>
+                <Button bgColor flex={true}>submit</Button>
             </QuizForm>
         )
     }
